@@ -18,6 +18,7 @@ The only automated thing the code does is use the Pluralsight or Lynda.com in th
 
 I plan to add some screenshots and stuff so people can see what it all looks like.
 
+AUTOMATIC SEASON NAMING!!<br/>
 One really cool thing this does is use the section/chapter folder name as the season title. Previously it seemed there was no way to set the season title but I figured out a little hack to call into the Plex UI to set it. While it is cool, it makes the code super duper brittle, if Plex decides to change the UI it may break my code, but I'm willing to take that chance ;)
 
 Also, finally, this is my first Python anything, I don't "know" the language, so if there are syntactical improvements please let me know. I felt like I was back doing VBScript (sorry python peeps!) trying to fumble through this.
