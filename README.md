@@ -1,5 +1,5 @@
 # PlexTrainingVideoScannerAndAgent
-A scanner and agent for training video i.e. Pluralsight, Lynda.com, etc.
+A Plex scanner and agent for training videos i.e. Pluralsight, Lynda.com, etc.
 
 ![](images/main.png?raw=true)
 
