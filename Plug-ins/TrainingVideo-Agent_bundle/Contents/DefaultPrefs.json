@@ -1,0 +1,14 @@
+[
+    {
+        "id": "logger.debug.enabled",
+        "label": "Enable debug logging",
+        "type": "bool",
+        "default": "false"
+    },
+    {
+        "id": "user.plex.token",
+        "label": "X-Plex-Token",
+        "type": "text",
+        "default": ""
+    }
+]
