@@ -18,8 +18,6 @@ So, this gets no information from any training site, there seemed to be no good 
 
 The only automated thing the code does is use the Pluralsight or Lynda.com in the folder name for the show to set the Network or Studio in Plex, this allows you to see all videos from each provider if you want.
 
-I plan to add some screenshots and stuff so people can see what it all looks like.
-
 AUTOMATIC SEASON NAMING!!<br/>
 One really cool thing this does is use the section/chapter folder name as the season title. Previously it seemed there was no way to set the season title but I figured out a little hack to call into the Plex UI to set it. While it is cool, it makes the code super duper brittle, if Plex decides to change the UI it may break my code, but I'm willing to take that chance ;)
 
