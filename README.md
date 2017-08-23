@@ -24,10 +24,3 @@ One really cool thing this does is use the section/chapter folder name as the se
 ![](images/course.png?raw=true)
 
 Also, finally, this is my first Python anything, I don't "know" the language, so if there are syntactical improvements please let me know. I felt like I was back doing VBScript (sorry python peeps!) trying to fumble through this.
-
-Roadmap/Todo
--Add support for more patterns and site providers i.e. digitial tutors, tutsplus, etc.
--Add support for tagging automatically based on terms. i.e. if the show name contains a certain term like Angular then we add a collection tag for Angular so all shows can be filtered based on these tags
--Figure out some way to autmagically add/generate cover art for a course. Not sure how this would be done, maybe a private service that generates a cover with a set background per site and the course title overlaid
--Fix the site checking code, the replace is case sensitive ATM, I don't know Python well enough to fix it easily. Probably should be removed by index instead of literal.
--Add code to title case the course name into the scrub method
