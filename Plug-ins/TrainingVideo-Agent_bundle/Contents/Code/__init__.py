@@ -297,7 +297,9 @@ class SeriesEpisodeMediaParser(BaseMediaParser):
                 #Lynda.com.Angular2.for.NET.Developers\1. Course Overview\500547_01_02_XR15_SampleMovieDb.mp4
                 r'(?P<showTitle>[^\\/]+)[\\/][sc|season|chapter]*?[ ]*?(?P<seasonNumber>[0-9]+)([-\. ]+(?P<seasonTitle>[^\\/]+)){0,1}[\\/](?P<showNumber>[0-9]+)_\d\d_(?P<episodeNumber>\d+)[ _]*\w\w\d\d[-\.]{0,1}[ _]*(?P<episodeTitle>.*)\.(?P<ext>.+)$',
                 #Lynda.com.Angular2.for.NET.Developers\1. Course Overview\01_02-Using the exercise files.mp4
-                r'(?P<showTitle>[^\\/]+)[\\/][sc|season|chapter]*?[ ]*?(?P<seasonNumber>[0-9]+)([-\. ]+(?P<seasonTitle>[^\\/]+)){0,1}[\\/](?P<showNumber>[0-9]*)[_-]{0,1}?[\d\d]{0,1}?[_-]{0,1}?(?P<episodeNumber>\d+)[ _-]*?[\w\w\d\d]*?[-\.]{0,1}[ _]*(?P<episodeTitle>.*)\.(?P<ext>.+)$'
+                r'(?P<showTitle>[^\\/]+)[\\/][sc|season|chapter]*?[ ]*?(?P<seasonNumber>[0-9]+)([-\. ]+(?P<seasonTitle>[^\\/]+)){0,1}[\\/](?P<showNumber>[0-9]*)[_-]{0,1}?[\d\d]{0,1}?[_-]{0,1}?(?P<episodeNumber>\d+)[ _-]*?[\w\w\d\d]*?[-\.]{0,1}[ _]*(?P<episodeTitle>.*)\.(?P<ext>.+)$',
+                #Udemy Entrepreneurship For Noobees/01_-_Welcome_to_Entrepreneurship_for_Noobees/01_-_Introduction_and_Welcome.mp4
+                r'(?P<showTitle>[^\\/]+)[\\/][sc|season|chapter]*?[ ]*?(?P<seasonNumber>[0-9]+)([-_\. ]+(?P<seasonTitle>[^\\/]+)){0,1}[\\/](?P<showNumber>[0-9]{0})(?P<episodeNumber>\d+)[ _-]*(?P<episodeTitle>.*)\.(?P<ext>.+)$'
                 ]
 
     def setValues(self, match):
@@ -467,6 +469,17 @@ class TrainingVideoAgentTVShows(Agent.TV_Shows):
             media.title = media.title.replace('Pluralsight','').strip()
             metadata.title = media.title
             metadata.studio = 'Pluralsight.com'
+        if 'lynda' in media.title.lower():
+            logDebug('Lynda.com', 'Set studio and remove Lynda.com from title')
+            media.title = media.title.replace('Lynda','').strip()
+            metadata.title = media.title
+            metadata.studio = 'Lynda.com'
+        if 'udemy' in media.title.lower():
+            logDebug('Udemy', 'Set studio and remove Lynda.com from title')
+            media.title = media.title.replace('Udemy','').strip()
+            metadata.title = media.title
+            metadata.studio = 'Udemy.com'
+
 
     def addFilePath(self, filePaths, newFilePath):
         '''

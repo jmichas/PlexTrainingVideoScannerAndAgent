@@ -1,9 +1,9 @@
 # PlexTrainingVideoScannerAndAgent
-A Plex scanner and agent for training videos i.e. Pluralsight, Lynda.com, etc.
+A Plex scanner and agent for training videos i.e. Pluralsight, Lynda.com, Udemy, etc.
 
 ![](images/main.png?raw=true)
 
-This currently only works with Pluralsight and Lynda.com offline files. The structure of the files is somewhat rigid, but it is pretty much how all of my files were organized.
+This currently only works with Pluralsight, Udemy and Lynda.com offline files. The structure of the files is somewhat rigid, but it is pretty much how all of my files were organized.
 
 Course Name/1. Chapter Name/Media File<br/>
 i.e. Lynda.com.Angular2.for.NET.Developers\1. Course Overview\500547_01_02_XR15_SampleMovieDb.mp4
@@ -16,7 +16,7 @@ I obviously haven't accounted for every permutation of how you may have these fi
 NO ARTWORK IS DOWNLOADED!!<br/>
 So, this gets no information from any training site, there seemed to be no good way to locate show/course data, your best bet at this point is to manually go take a screen shot and add it as a poster in Plex.
 
-The only automated thing the code does is use the Pluralsight or Lynda.com in the folder name for the show to set the Network or Studio in Plex, this allows you to see all videos from each provider if you want.
+The only automated thing the code does is use the Pluralsight, Udemy or Lynda.com in the folder name for the show to set the Network/Studio in Plex, this allows you to see all videos from each provider if you want.
 
 AUTOMATIC SEASON NAMING!!<br/>
 One really cool thing this does is use the section/chapter folder name as the season title. Previously it seemed there was no way to set the season title but I figured out a little hack to call into the Plex UI to set it. While it is cool, it makes the code super duper brittle, if Plex decides to change the UI it may break my code, but I'm willing to take that chance ;)
@@ -24,3 +24,9 @@ One really cool thing this does is use the section/chapter folder name as the se
 ![](images/course.png?raw=true)
 
 Also, finally, this is my first Python anything, I don't "know" the language, so if there are syntactical improvements please let me know. I felt like I was back doing VBScript (sorry python peeps!) trying to fumble through this.
+
+Roadmap/Todo
+-Add support for more patterns and site providers i.e. digitial tutors, tutsplus, etc.
+-Add support for tagging automatically based on terms. i.e. if the show name contains a certain term like Angular then we add a collection tag for Angular so all shows can be filtered based on these tags
+-Figure out some way to autmagically add/generate cover art for a course. Not sure how this would be done, maybe a private service that generates a cover with a set background per site and the course title overlaid
+-Fix the site checking code, the replace is case sensitive ATM, I don't know Python well enough to fix it easily. Probably should be removed by index instead of literal.
