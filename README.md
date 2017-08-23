@@ -24,3 +24,10 @@ One really cool thing this does is use the section/chapter folder name as the se
 ![](images/course.png?raw=true)
 
 Also, finally, this is my first Python anything, I don't "know" the language, so if there are syntactical improvements please let me know. I felt like I was back doing VBScript (sorry python peeps!) trying to fumble through this.
+
+# Installation
+Download the files or clone the repo.<br/>
+Put the Series directory with the Training Video Scanner.py into the Scanner directory your plex media server root directory/folder.<br/>
+Rename the TrainingVideo-Agent_bundle to TrainingVideo-Agent.bundle and put the in the Plug-ins directory in your plex media server root directory/folder.<br/>
+
+That's about it, now you just need to setup a new library as a TV Show, in the advanced settings set the Scanner to Training Video Scanner and the agent to Training Video Agent. You will need to also enter your plex auth token. If you are unsure how to find your plex token google is your friend.
