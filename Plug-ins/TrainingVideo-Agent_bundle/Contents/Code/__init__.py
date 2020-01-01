@@ -187,7 +187,7 @@ class BaseMediaParser(object):
         #matchCount = int(len(list(camelCaseMatches)))
         matchCount = len(camelCaseMatches)
         logDebug('matchCount', str(len(camelCaseMatches)))
-        
+
         if matchCount > 1:
             idx = 1
             processed = ''
@@ -244,7 +244,7 @@ class BaseMediaParser(object):
                 self.episodeSummary = loadTextFromFile(summaryFilePath)
             else:
                 logDebug('setValues', 'episode summary file does not exist')
-            
+
     def getSupportedRegexes(self):
         return []
 
@@ -286,8 +286,8 @@ class BaseMediaParser(object):
 
     def getSeasonTitle(self):
         return self.seasonTitle
-        
-                 
+
+
 class SeriesEpisodeMediaParser(BaseMediaParser):
 
     def getSupportedRegexes(self):
@@ -305,7 +305,7 @@ class SeriesEpisodeMediaParser(BaseMediaParser):
     def setValues(self, match):
         # set the common values
         BaseMediaParser.setValues(self, match)
-        
+
 
 def Start():
      log('Start', 'starting agents %s, %s', SERIES_AGENT_NAME)
@@ -313,16 +313,16 @@ def Start():
 
 def get_universal_plex_token():
     return str(Prefs['user.plex.token'])
-    # pref_path = os.path.join(Core.app_support_path, "Preferences.xml") 
+    # pref_path = os.path.join(Core.app_support_path, "Preferences.xml")
     # if os.path.exists(pref_path):
-    #     try: 
-    #         global_prefs = Core.storage.load(pref_path) 
-    #         return XML.ElementFromString(global_prefs).xpath('//Preferences/@PlexOnlineToken')[0] 
-    #     except: 
-    #         Log.Warn("Couldn't determine Plex Token") 
-    # else: 
+    #     try:
+    #         global_prefs = Core.storage.load(pref_path)
+    #         return XML.ElementFromString(global_prefs).xpath('//Preferences/@PlexOnlineToken')[0]
+    #     except:
+    #         Log.Warn("Couldn't determine Plex Token")
+    # else:
     #     Log("Did NOT find Preferences file - please check logfile and hierarchy. Aborting!")
-    
+
 def camel_case_split(identifier):
     matches = re.finditer('.+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)', identifier)
     return [m.group(0) for m in matches]
@@ -430,13 +430,13 @@ class TrainingVideoAgentTVShows(Agent.TV_Shows):
                         break
 
             logDebug('seasonMetadata','title after file loop : %s',seasonMetadata.title)
-            
+
 
             #Get the library section id from the XML metadata
             metadataCheckUrl = 'http://127.0.0.1:32400/library/metadata/'+str(media.seasons[s].id)+'?checkFiles=1&includeExtras=1&X-Plex-Token=' + plexToken
             logDebug('metadataXml','url: %s', metadataCheckUrl)
 
-            metadataXml = urllib2.urlopen(metadataCheckUrl) 
+            metadataXml = urllib2.urlopen(metadataCheckUrl)
             xmldoc = minidom.parse(metadataXml)
             mediaContainer = xmldoc.getElementsByTagName('MediaContainer')[0]
             librarySectionId = mediaContainer.attributes['librarySectionID'].value
@@ -448,7 +448,7 @@ class TrainingVideoAgentTVShows(Agent.TV_Shows):
             logDebug('UXHack','dataEncoded: %s', dataEncoded)
 
             urlStr = 'http://127.0.0.1:32400/library/sections/'+str(librarySectionId)+'/all?' + dataEncoded
-            
+
             rdata = urllib.urlencode({'dummy':'dummy'}) #I think we need this so that urllib2 will perform a PUT, with not data it just does a GET
             logDebug('UXHack','url: %s', urlStr)
             #logDebug('UXHack','rdata: %s', rdata)
@@ -459,27 +459,23 @@ class TrainingVideoAgentTVShows(Agent.TV_Shows):
             url = opener.open(request)
 
     def setStudioAndUpdateShowTitle(self,metadata,media):
-        if 'lynda com' in media.title.lower():
-            logDebug('Lynda.com', 'Set studio and remove Lynda.com from title')
-            media.title = media.title.replace('Lynda com','').strip()
-            metadata.title = media.title
-            metadata.studio = 'Lynda.com'
-        if 'pluralsight' in media.title.lower():
-            logDebug('Pluralsight.com', 'Set studio and remove Pluralsight from title')
-            media.title = media.title.replace('Pluralsight','').strip()
-            metadata.title = media.title
-            metadata.studio = 'Pluralsight.com'
-        if 'lynda' in media.title.lower():
-            logDebug('Lynda.com', 'Set studio and remove Lynda.com from title')
-            media.title = media.title.replace('Lynda','').strip()
-            metadata.title = media.title
-            metadata.studio = 'Lynda.com'
-        if 'udemy' in media.title.lower():
-            logDebug('Udemy', 'Set studio and remove Lynda.com from title')
-            media.title = media.title.replace('Udemy','').strip()
-            metadata.title = media.title
-            metadata.studio = 'Udemy.com'
-
+        '''
+        Sets the name of the studio while removing it from the shows title
+        '''
+        studios = [
+            ['lynda com', 'Lynda.com'], # . was sanitized out in scanner
+            ['lynda', 'Lynda.com'],
+            ['pluralsight', 'Pluralsight.com'],
+            ['udemy', 'Udemy.com']
+        ]
+        for s in studios:
+            if s[0] in media.title.lower():
+                logDebug('setStudioAndUpdateShowTitle', 'Set studio and remove ' + s[1] + ' from title')
+                media.title = re.sub(s[0], '', media.title, flags=re.IGNORECASE)
+                media.title = media.title.strip()
+                metadata.title = media.title
+                metadata.studio = s[1]
+                break
 
     def addFilePath(self, filePaths, newFilePath):
         '''
