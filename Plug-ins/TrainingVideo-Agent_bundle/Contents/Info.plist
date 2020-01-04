@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-	<dict>
- 		<key>CFBundleIdentifier</key>
-		<string>com.michas.plex.agents.personalmedia</string>
-		
-       	<key>PlexAgentAttributionText</key>
-        <string>
-            Provides an agent capable of parsing Lynda.com, Pluralsight and other training video materials.
- More info to come.</string>
-   
-		<key>PlexFrameworkVersion</key>
-		<string>2</string>
-		
-		<key>PlexPluginClass</key>
-		<string>Agent</string>
-        
+    <dict>
+        <key>CFBundleIdentifier</key>
+        <string>com.plexapp.agents.michastrainingvideo</string>
+
+        <key>PlexAgentAttributionText</key>
+        <string>Provides an agent capable of parsing Lynda.com, Pluralsight and other training video materials. More info to come.</string>
+
+        <key>PlexFrameworkVersion</key>
+        <string>2</string>
+
+        <key>PlexPluginClass</key>
+        <string>Agent</string>
+
         <key>PlexPluginCodePolicy</key>
         <string>Elevated</string>
-		
-		<key>PlexPluginConsoleLogging</key>
+
+        <key>PlexPluginConsoleLogging</key>
         <string>1</string>
 
         <key>PlexPluginDevMode</key>
         <string>1</string>
-	</dict>
+    </dict>
 </plist>
