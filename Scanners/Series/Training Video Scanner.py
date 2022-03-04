@@ -2,22 +2,24 @@
 # By Jason Michas original code borrowed from Mitchell Arends ExtendedPersonalMedia-Agent.bundle
 
 import re, os, os.path, datetime, ConfigParser, logging
+import inspect                                                       # getfile, currentframe
 import Media, VideoFiles, Stack, Utils
 from mp4file import mp4file, atomsearch
 
 # Year regular expression
 YEAR_REGEX = r'^(?P<year>[0-9]{4})$'
 
-# default PMS data location
-LOC_WIN = '%LOCALAPPDATA%\Plex Media Server'
-LOC_MAC = '$HOME/Library/Application Support/Plex Media Server'
-LOC_LIN = '$PLEX_HOME/Library/Application Support/Plex Media Server'
-
-loggingPath = 'P:\AppData\Plex Media Server\Logs' #os.path.expandvars(LOC_WIN)
+# PMS data location
+PLEX_ROOT  = os.path.abspath(os.path.join(os.path.dirname(inspect.getfile(inspect.currentframe())), "..", ".."))
+if not os.path.isdir(PLEX_ROOT):
+  path_location = { 'Windows': '%LOCALAPPDATA%\\Plex Media Server',
+                    'MacOSX':  '$HOME/Library/Application Support/Plex Media Server',
+                    'Linux':   '$PLEX_HOME/Library/Application Support/Plex Media Server' }
+  PLEX_ROOT = os.path.expandvars(path_location[Platform.OS.lower()] if Platform.OS.lower() in path_location else '~')  # Platform.OS:  Windows, MacOSX, or Linux
 
 # setup logging
 LOG_FORMAT = '%(asctime)s| %(levelname)-8s| %(message)s'
-loggingPath = loggingPath +'\\training_video_scanner.log'
+loggingPath = os.path.join(PLEX_ROOT, 'Logs', 'training_video_scanner.log')
 logging.basicConfig(filename=loggingPath, format=LOG_FORMAT, level=logging.DEBUG)
 
 def log(methodName, message, *args):
@@ -28,31 +30,28 @@ def log(methodName, message, *args):
     # Replace the arguments in the string
     if args:
         logMsg = message % args
-        
+
     logMsg = methodName + ' :: ' + logMsg
-    print logMsg
-    #logging.debug(logMsg)
-
-
+    logging.debug(logMsg)
 
 class CustomParserConfig(object):
     '''
         Finds the configuration for the specified file
     '''
-    
+
     def __init__(self, filePath):
         self.filePath = filePath
         self.config = ConfigParser.SafeConfigParser()
         self.config.read(filePath)
-        
+
     def fileNameRegex(self):
         return self.config.get('parser', 'file.name.regex')
 
 class ConfigMap(object):
-    
+
     def findCustomParser(self, rootDir, filePath):
         customParser = None
-        
+
         configFile = self.findConfigFile(rootDir, filePath)
         if configFile is not None:
             log('__init__', 'found config file %s for media file %s', configFile, filePath)
@@ -60,13 +59,13 @@ class ConfigMap(object):
             config = CustomParserConfig(configFile)
             # and custom parser
             customParser = CustomMediaParser(config)
-            
+
         return customParser
-             
+
     def findConfigFile(self, rootDir, filePath):
         rootDirFound = False
         parentDir = filePath
-        
+
         # iterate over the directory
         while not rootDirFound:
             # Get the parent directory for the file
@@ -82,8 +81,8 @@ class ConfigMap(object):
 
             # check to see if this is the root dir
             if parentDir == rootDir:
-                rootDirFound = True           
-            
+                rootDirFound = True
+
 class BaseMediaParser(object):
     '''
         Parses the file name and determines the type of tile that was found
@@ -105,7 +104,7 @@ class BaseMediaParser(object):
                 processed = match.group('episodeTitle').strip()
                 log('stripPart', 'stripped episode title: %s', processed)
                 break
-                
+
         return processed
 
     def scrub(self, string):
@@ -120,16 +119,16 @@ class BaseMediaParser(object):
                 idx = idx + 1
         else:
             processed = string
-            
+
         log('scrubString', 'original: [%s] scrubbed: [%s]', string, processed)
         return processed
-    
+
     def setValues(self, match):
         pass
 
     def getSupportedRegexes(self):
         return []
-    
+
     def containsMatch(self, mediaFile):
         log('contains match scanner', "*************************")
         retVal = False
@@ -140,9 +139,9 @@ class BaseMediaParser(object):
             if match:
                 retVal = True
                 break
-            
+
         return retVal
-        
+
 
     def parse(self, mediaFile, lang):
         self.mediaFile = mediaFile
@@ -157,14 +156,14 @@ class BaseMediaParser(object):
                 log('parse', 'found matches')
                 self.setValues(match)
 
-                # Determine if the containing directory is numeric and 4 digits long - if so treat it like it's a year                
+                # Determine if the containing directory is numeric and 4 digits long - if so treat it like it's a year
                 self.seasonYear = None
                 #match = re.search(YEAR_REGEX, str(self.seasonNumber))
                 #if match:
-                    #self.seasonYear = self.seasonNumber           
+                    #self.seasonYear = self.seasonNumber
 
                 break
-    
+
     def getShowTitle(self):
         return self.showTitle
 
@@ -205,22 +204,22 @@ class SeriesEpisodeMediaParser(BaseMediaParser):
         self.episodeNumber = int(match.group('episodeNumber').strip())
         self.episodeTitle = self.scrub(self.stripPart(match.group('episodeTitle').strip()))
 
-        
+
 class CustomMediaParser(BaseMediaParser):
 
     def __init__(self, config):
         self.parserConfig = config
-    
+
     def getSupportedRegexes(self):
         regexes = []
-        
+
         # Check the config to see if a regex has been set
         configRegex = self.parserConfig.fileNameRegex()
         if configRegex is not None:
             regexes.append(configRegex)
         log('CustomMediaParser.getSupportedRegexes', 'custom file name regexes in use %s', str(regexes))
         return regexes
-    
+
     def setValues(self, match):
         # Set all of the supported values
         self.showTitle = self.scrub(match.group('showTitle').strip())
@@ -233,7 +232,7 @@ class CustomMediaParser(BaseMediaParser):
         self.episodeDay = int(match.group('episodeDay').strip())
         self.episodeNumber = int(match.group('episodeNumber').strip())
         self.episodeTitle = self.scrub(self.stripPart(match.group('episodeTitle').strip()))
-        
+
         # create the episode release date
         self.episodeReleaseDate = None
         if self.episodeYear is not None and self.episodeMonth is not None and self.episodeDay is not None:
@@ -260,7 +259,7 @@ def Scan(path, files, mediaList, subdirs, language=None, root=None):
         if str(excludedBasename) == 'source files':
             log('Subdir to Whack', excludedBasename)
             subdirs_to_whack.append(subdir)
-    
+
     subdirs_to_whack = list(set(subdirs_to_whack))
     for subdir in subdirs_to_whack:
         subdirs.remove(subdir)
@@ -270,26 +269,26 @@ def Scan(path, files, mediaList, subdirs, language=None, root=None):
     series_parsers = [SeriesEpisodeMediaParser()]
     # Stores the configuration map
     config_map = ConfigMap()
-    
+
     log('Scan', 'path: %s', path)
     log('Scan', 'files: %s', files)
     log('Scan', 'mediaList: %s', mediaList)
     log('Scan', 'subdirs: %s', subdirs)
     log('Scan', 'language: %s', language)
     log('Scan', 'root: %s', root)
-    
+
     # Scan for video files.
     VideoFiles.Scan(path, files, mediaList, subdirs, root)
 
     for idx, file in enumerate(files):
         log('Scan', 'file: %s', file)
-        
+
         absFilePath = os.path.abspath(file)
         absRootDir = os.path.abspath(root)
         log('Scan', 'absolute file path: %s', absFilePath)
-        
+
         parsers = []
-        
+
         # Check the customParser map for this file
         customParser = config_map.findCustomParser(absRootDir, absFilePath)
         if customParser is not None:
@@ -298,7 +297,7 @@ def Scan(path, files, mediaList, subdirs, language=None, root=None):
         else:
             # We are using the default parsers
             parsers = series_parsers
-            
+
         # Iterate over the list of parsers and parse the file path
         for parser in parsers:
             log('Scan', 'parser %s', parser)
@@ -311,19 +310,19 @@ def Scan(path, files, mediaList, subdirs, language=None, root=None):
                 seasonNumber = parser.getSeasonNumber()
                 log('Scan', 'season number: %s', seasonNumber)
                 seasonTitle = parser.getSeasonTitle()
-                log('Scan', 'season number: %s', seasonNumber)
+                log('Scan', 'season title: %s', seasonTitle)
                 seasonYear = parser.getSeasonYear()
                 log('Scan', 'season year: %s', seasonYear)
                 episodeNumber = parser.getEpisodeNumber()
                 log('Scan', 'episode number: %s', episodeNumber)
                 episodeTitle = parser.getEpisodeTitle()
                 log('Scan', 'episode title: %s', episodeTitle)
-        
+
                 vid = Media.Episode(showTitle, seasonNumber, episodeNumber, episodeTitle, seasonYear)
                 vid.parts.append(file)
                 mediaList.append(vid)
                 break
-            
+
     # stack files
     log('Scan', 'stack media')
     Stack.Scan(path, files, mediaList, subdirs)
